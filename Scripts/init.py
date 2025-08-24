@@ -7,7 +7,7 @@ pygame.init()
 # Configurações da tela
 largura, altura = 500, 353
 tela = pygame.display.set_mode((largura, altura))
-pygame.display.set_caption("Escape the Hole")
+pygame.display.set_caption("Escape from the Hole")
 icon = pygame.image.load('../Icon/Icon.png')
 pygame.display.set_icon(icon)
 

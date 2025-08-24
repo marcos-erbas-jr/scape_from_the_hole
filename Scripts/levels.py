@@ -8,11 +8,11 @@ def jogo_principal():
     # Tela
     LARGURA, ALTURA = 500, 353
     tela = pygame.display.set_mode((LARGURA, ALTURA))
-    pygame.display.set_caption("Escape the Hole")
+    pygame.display.set_caption("Escape from the Hole")
 
     clock = pygame.time.Clock()
 
-    # --- Cores ---
+    #Cores
     PRETO = (0, 0, 0)
     LARANJA = (255, 140, 0)
     MARROM = (120, 80, 60)
@@ -21,10 +21,10 @@ def jogo_principal():
     nave_voando = False
     vel_nave_y = 2  # velocidade de subida da nave
 
-    tempo_total = 15  # segundos
+    tempo_total = 15  # Tem do timer do jogo
     tempo_restante = tempo_total
 
-    # --- Carregar animações ---
+    #Carregar animações
     idle_frames = [pygame.image.load(f"../Animation Idle/Idle{i}.png").convert_alpha() for i in range(1, 5)]
     run_frames = [pygame.image.load(f"../Run/Run{i}.png").convert_alpha() for i in range(1, 4)]
 
@@ -33,53 +33,52 @@ def jogo_principal():
     frame_intervalo = 150  # ms entre frames
     direcao = "direita"
 
-    # --- Player ---
+    # Player
     player = idle_frames[0].get_rect(midbottom=(100, ALTURA - 20))
     vel_x = vel_y = 0
     gravidade = 0.8
     
     no_chao = False
 
-    # --- Energia ---
+    #Energia
     energia = 0
     energia_max = 100
 
-    # --- Plataformas ---
+    #Plataformas
     ANDAR_ALTURA = 120
     NUM_ANDARES = 15
     andares = [pygame.Rect(0, ALTURA - 20 - (i * ANDAR_ALTURA), LARGURA, 20) for i in range(NUM_ANDARES)]
     andar_atual = 0
 
-    # --- Nave ---
+    #Nave
     nave_img = pygame.image.load(f"../Ship/ShipStatic1.png").convert_alpha()
     nave_frames = [
         pygame.image.load("../Ship/Ship1.png").convert_alpha(),
-        pygame.image.load("../Ship/Ship2.png").convert_alpha()
-    ]
+        pygame.image.load("../Ship/Ship2.png").convert_alpha()]
 
     nave_index = 0
     nave_tempo = 0
     nave_frame_intervalo = 200  # ms entre frames
 
-    # --- Cristais ---
+    #Cristais
     cristal_img = pygame.image.load(f"../Itens/Cristal.png").convert_alpha()
     cristais = []
     for i in range(len(andares)):
         if i == NUM_ANDARES - 1:
-            # Último andar: colocar nave
+            # Aparecer a nave no último andar
             nave_rect = nave_img.get_rect(midbottom=(random.randint(50, LARGURA - 50), andares[i].top))
         else:
             x_aleatorio = random.randint(20, LARGURA - 20)
             c = cristal_img.get_rect(midbottom=(x_aleatorio, andares[i].top))
             cristais.append(c)
 
-    # --- Barra de energia ---
+    #Barra de energia
     def desenhar_barra(x, y, largura, altura, valor, maximo):
         pygame.draw.rect(tela, (124, 99, 94), (x, y, largura, altura), 2)
         altura_interna = int((valor / maximo) * (altura - 4))
         pygame.draw.rect(tela, LARANJA, (x + 2, y + altura - 2 - altura_interna, largura - 4, altura_interna))
 
-    # --- Câmera ---
+    # Câmera
     camera_y = 0
     scroll_vel = 5  # pixels por frame
 
@@ -88,11 +87,11 @@ def jogo_principal():
     you_win_img = pygame.transform.scale(you_win_img, (500, 353))
     tempo_inicio_voo = None
     mostrar_you_win = False
-    delay_you_win = 3  # segundos depois de a nave começar a subir
+    delay_you_win = 3  # segundos depois da nave começar a subir
 
     # --- Game Over ---
     game_over_img = pygame.image.load("../GameOver/GameOverFinal.png").convert_alpha()
-    game_over_img = pygame.transform.scale(game_over_img, (500, 353))  # ajusta o tamanho
+    game_over_img = pygame.transform.scale(game_over_img, (500, 353))  # ajustar o tamanho
     game_over = False
 
     # Reiniciar jogo
@@ -108,12 +107,12 @@ def jogo_principal():
             tela.blit(imagem, (0, 0))
             pygame.display.flip()
 
-            # verifica se passaram 5 segundos (5000 ms)
+            # delay para reiniciar o jogo
             if pygame.time.get_ticks() - tempo_inicio > 5000:
                 rodando = False
 
 
-    # --- Loop principal ---
+    # Loop principal
     while True:
         dt = clock.tick(60)
 
@@ -122,12 +121,12 @@ def jogo_principal():
                 pygame.quit()
                 sys.exit()
 
-        # Se já deu Game Over -> mostra tela e encerra a função
+        # Se foi detectado gameover, mostra a tela do GameOver e depois reinicia
         if game_over:
             mostrar_tela_final(tela, game_over_img)
-            return  # sai de jogo_principal() e volta para tela_inicial()
+            return  # sai da função jogo_principal() e volta para tela_inicial()
 
-        # Atualizar timer apenas se o jogador ainda não entrou na nave e não acabou o jogo
+        # Atualiza timer apenas se o jogador ainda não entrou na nave e não acabou o jogo
         if not jogador_entrou_na_nave and not game_over:
             tempo_restante -= dt / 1000  # dt está em ms, convertemos para segundos
             if tempo_restante <= 0:
@@ -135,7 +134,7 @@ def jogo_principal():
                 game_over = True
                 continue  # no próximo frame desenha tela de game over
 
-        # --- Input ---
+        #Input
         teclas = pygame.key.get_pressed()
         vel_x = 0
         if teclas[pygame.K_LEFT]:
@@ -150,7 +149,7 @@ def jogo_principal():
         elif vel_x > 0:
             direcao = "direita"
 
-        # --- Física ---
+        #Física
         vel_y += gravidade
         player.x += vel_x
         player.y += vel_y
@@ -175,7 +174,7 @@ def jogo_principal():
                 energia = energia_max
                 c.x = -100  # remove cristal da tela
 
-        # Colisão com a nave (último andar)
+        # Colisão com a nave do último andar
         if player.colliderect(nave_rect):
             jogador_entrou_na_nave = True
             nave_voando = True
@@ -189,11 +188,11 @@ def jogo_principal():
             if energia < 0:
                 energia = 0
 
-        # Subir de andar automaticamente
+        '''# Subir de andar automaticamente
         if player.top < andares[andar_atual].top - 100 and andar_atual < NUM_ANDARES - 1:
-            andar_atual += 1
+            andar_atual += 1'''
 
-        # --- Animação ---
+        #Animação
         if vel_x != 0:
             run_tempo += dt
             if run_tempo >= frame_intervalo:
@@ -211,18 +210,18 @@ def jogo_principal():
         if direcao == "esquerda":
             player_img = pygame.transform.flip(player_img, True, False)
 
-        # --- Atualizar câmera ---
+        #Atualizar câmera
         if player.top - camera_y < ALTURA / 2:
             diff = (ALTURA / 2) - (player.top - camera_y)
             camera_y -= min(diff, scroll_vel)
 
-        # --- Verificação de Objetivo ---
+        #Verificação de objetivo
         if tempo_inicio_voo is not None and not mostrar_you_win:
             tempo_passado_voo = (pygame.time.get_ticks() - tempo_inicio_voo) / 1000  # em segundos
             if tempo_passado_voo >= delay_you_win:
                 mostrar_you_win = True
 
-        # --- Desenho ---
+        #Desenho da tela
         tela.fill(PRETO)
 
         for i, plat in enumerate(andares):
